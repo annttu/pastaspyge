@@ -1,6 +1,8 @@
 PaStaSPyGe
 ==========
 
-Parhaiden staattisien sivujen generaattori
+Paras Staattisien sivujen Pythonistinen generaattori
 
-Kapsi Internet-käyttäjät ry 2013
+Copyright 2013 Kapsi Internet-käyttäjät ry
+
+Tekijä: Antti Jaakkola
