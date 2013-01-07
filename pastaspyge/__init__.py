@@ -88,9 +88,9 @@ class Pasta(object):
                 raise IsDir('Path %s does not exist!' % sourcepath)
             source = codecs.open(sourcepath, 'r', 'utf-8')
             if f.startswith('static/'):
-                f = f[len('static'):]
+                f = f[len('static/'):]
             else:
-                f = f[len('output'):]
+                f = f[len('output/'):]
             destpath = os.path.join(self.config.document_root, f)
             if not os.path.isdir(os.path.dirname(destpath)):
                 try:
