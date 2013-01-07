@@ -69,7 +69,7 @@ def post_receive(repo_dir, path_prefix=''):
     os.environ['GIT_DIR'] = os.path.join(repo_dir,'.git')
     os.environ['GIT_WORK_TREE'] = repo_dir
     git_pull()
-    changed = changed_files(new_commit, old_commit))
+    changed = changed_files(new_commit, old_commit)
     pasta = Pasta(root=repo_dir)
     copy = []
     copy_all = False
@@ -81,7 +81,7 @@ def post_receive(repo_dir, path_prefix=''):
             copy.append(os.path.join(path_prefix, 'output', f))
         elif f.startswith(os.path.join(path_prefix,'static/')):
             copy.append(os.path.join(path_prefix, f))
-        elif:
+        elif f.startswith(os.path.join(path_prefix,'templates/')):
             # template changed, regenerate everything
             pasta.generate_all()
             copy_all = True
