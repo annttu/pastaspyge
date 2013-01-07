@@ -46,7 +46,7 @@ def changed_files(new=None, old=None):
     if stderr:
         log.error("stderr")
     for f in stdout.splitlines():
-        retval.append(f.strip().decode("utf-8"))
+        retval.append(f.strip().strip('"').decode("utf-8"))
     return retval
 
 def post_receive(repo_dir, path_prefix=''):
