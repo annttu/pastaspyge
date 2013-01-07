@@ -84,10 +84,10 @@ def post_receive(repo_dir, path_prefix=''):
     changed, delete = changed_files(new_commit, old_commit)
     remove = []
     for d in delete:
-        if d.starstwith(os.path.join(path_prefix, 'dynamic/')):
+        if d.startswith(os.path.join(path_prefix, 'dynamic/')):
             d = d[len(os.path.join(path_prefix, 'dynamic/'))-1:]
             remove.append(d)
-        elif d.starstwith(os.path.join(path_prefix, 'static/')):
+        elif d.startswith(os.path.join(path_prefix, 'static/')):
             d = d[len(os.path.join(path_prefix, 'static/'))-1:]
             remove.append(d)
     delete = remove
