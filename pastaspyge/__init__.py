@@ -90,8 +90,14 @@ class Pasta(object):
             if f.startswith('static/'):
                 f = f[:len('static')]
             else:
-                f = f[:len('dynamic')]
+                f = f[:len('output')]
             destpath = os.path.join(self.config.document_root, f)
+            if not os.path.isdir(os.path.dirname(destpath)):
+                try:
+                    os.mkdir(os.path.dirname(destpath))
+                except IOError as e:
+                    self.log.exception(e)
+                    raise
             if os.path.exists(destpath) and not os.path.isfile(destpath):
                 self.log.error('Path %s already exist and is not file!' % destpath)
                 raise IsDir('Path %s already exist and is not file!' % destpath)
