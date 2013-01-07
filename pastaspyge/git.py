@@ -46,7 +46,8 @@ def changed_files(new=None, old=None):
     if stderr:
         log.error("stderr")
     for f in stdout.splitlines():
-        retval.append(f.strip().decode("utf-8").strip('"'))
+        f = f.strip().strip(b'"').decode("unicode_escape")
+        retval.append(f.encode("iso-8859-1").decode("utf-8"))
     return retval
 
 def post_receive(repo_dir, path_prefix=''):
@@ -66,7 +67,7 @@ def post_receive(repo_dir, path_prefix=''):
         logging.error("Directory %s does not exists" % repo_dir)
         sys.exit(1)
     os.chdir(repo_dir)
-    os.environ['GIT_DIR'] = os.path.join(repo_dir,'.git')
+    os.environ['GIT_DIR'] = os.path.join(repo_dir, '.git')
     os.environ['GIT_WORK_TREE'] = repo_dir
     git_pull()
     changed = changed_files(new_commit, old_commit)
@@ -79,9 +80,9 @@ def post_receive(repo_dir, path_prefix=''):
             f = f[len('dynamic/'):]
             pasta.generate_file(f, overwrite=True)
             copy.append(os.path.join(path_prefix, 'output', f))
-        elif f.startswith(os.path.join(path_prefix,'static/')):
+        elif f.startswith(os.path.join(path_prefix, 'static/')):
             copy.append(os.path.join(path_prefix, f))
-        elif f.startswith(os.path.join(path_prefix,'templates/')):
+        elif f.startswith(os.path.join(path_prefix, 'templates/')):
             # template changed, regenerate everything
             pasta.generate_all()
             copy_all = True
