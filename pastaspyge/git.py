@@ -81,10 +81,19 @@ def post_receive(repo_dir, path_prefix=''):
     os.environ['GIT_DIR'] = os.path.join(repo_dir, '.git')
     os.environ['GIT_WORK_TREE'] = repo_dir
     git_pull()
-    changed, deleted = changed_files(new_commit, old_commit)
+    changed, delete = changed_files(new_commit, old_commit)
+    remove = []
+    for d in delete:
+        if d.starstwith(os.path.join(path_prefix, 'dynamic/')):
+            d = d[len(os.path.join(path_prefix, 'dynamic/'))-1:]
+            remove.append(d)
+        elif d.starstwith(os.path.join(path_prefix, 'static/')):
+            d = d[len(os.path.join(path_prefix, 'static/'))-1:]
+            remove.append(d)
+    delete = remove
+    del remove
     pasta = Pasta(root=repo_dir)
     copy = []
-    copy_all = False
     for f in changed:
         if f.startswith(os.path.join(path_prefix, 'dynamic/')):
             # dynamic change
@@ -95,8 +104,8 @@ def post_receive(repo_dir, path_prefix=''):
             copy.append(os.path.join(path_prefix, f))
         elif f.startswith(os.path.join(path_prefix, 'templates/')):
             # template changed, regenerate everything
-            pasta.generate_all()
-            copy_all = True
+            for t in pasta.generate_all():
+                copy.append(os.path.join(path_prefix, 'output', t))
             break
     print("Copying files %s" % (copy,))
-    print("Deleting files %s" % (deleted,))
+    print("Deleting files %s" % (delete,))
