@@ -49,7 +49,7 @@ def changed_files(new=None, old=None):
         retval.append(f.strip())
     return retval
 
-def post-receive(repo_dir, path_prefix=''):
+def post_receive(repo_dir, path_prefix=''):
     if 'GIT_DIR' not in os.environ:
         not_hook()
     git_dir = os.path.abspath(os.environ['GIT_DIR'])
@@ -87,5 +87,3 @@ def post-receive(repo_dir, path_prefix=''):
             copy_all = True
             break
     print("Copying files %s" % (copy,))
-            
-            
