@@ -38,17 +38,28 @@ def git_pull():
     run_git(['git','pull'])
 
 def changed_files(new=None, old=None):
+    """Get added and deleted files between new and old commits
+    returns tuple (added, deleted)"""
     args = ['git', 'diff','--name-only']
     if new and old:
         args.append("%s...%s" % (old, new))
-    retval = []
-    (stdout, stderr) = run_git(args)
+    added = []
+    deleted = []
+    # get added files
+    (stdout, stderr) = run_git(args + ['--diff-filter=A,M'])
     if stderr:
         log.error("stderr")
     for f in stdout.splitlines():
         f = f.strip().strip(b'"').decode("unicode_escape")
-        retval.append(f.encode("iso-8859-1").decode("utf-8"))
-    return retval
+        added.append(f.encode("iso-8859-1").decode("utf-8"))
+    # get deleted files
+    (stdout, stderr) = run_git(args + ['--diff-filter=D'])
+    if stderr:
+        log.error("stderr")
+    for f in stdout.splitlines():
+        f = f.strip().strip(b'"').decode("unicode_escape")
+        deleted.append(f.encode("iso-8859-1").decode("utf-8"))
+    return (added, deleted)
 
 def post_receive(repo_dir, path_prefix=''):
     if 'GIT_DIR' not in os.environ:
@@ -70,7 +81,7 @@ def post_receive(repo_dir, path_prefix=''):
     os.environ['GIT_DIR'] = os.path.join(repo_dir, '.git')
     os.environ['GIT_WORK_TREE'] = repo_dir
     git_pull()
-    changed = changed_files(new_commit, old_commit)
+    changed, deleted = changed_files(new_commit, old_commit)
     pasta = Pasta(root=repo_dir)
     copy = []
     copy_all = False
@@ -88,3 +99,4 @@ def post_receive(repo_dir, path_prefix=''):
             copy_all = True
             break
     print("Copying files %s" % (copy,))
+    print("Deleting files %s" % (deleted,))
