@@ -86,7 +86,7 @@ class Pasta(object):
             if not os.path.isfile(sourcepath):
                 self.log.error('Path %s does not exist!' % sourcepath)
                 raise IsDir('Path %s does not exist!' % sourcepath)
-            source = codecs.open(sourcepath, 'w', 'utf-8')
+            source = codecs.open(sourcepath, 'r', 'utf-8')
             if f.startswith('static/'):
                 f = f[:len('static')]
             else:
