@@ -92,7 +92,7 @@ def post_receive(repo_dir, document_root, path_prefix=''):
             remove.append(d)
     delete = remove
     del remove
-    pasta = Pasta(root=repo_dir)
+    pasta = Pasta(root=repo_dir, document_root=document_root)
     copy = []
     for f in changed:
         if f.startswith(os.path.join(path_prefix, 'dynamic/')):
