@@ -1,0 +1,21 @@
+#!/usr/bin/env python3.1
+# encoding: utf-8
+
+"""
+Example post-receive hook
+Before use, set PAGE_REPO and PASTASPYGE variables
+"""
+
+# Local clone of this repository.
+PAGE_REPO = "/home/users/annttu/varjosivu/"
+DOCUMENT_ROOT = "/home/users/annttu/varjosivu_www/"
+
+# Path to pastaspyge source
+PASTASPYGE= "/home/users/annttu/pastaspyge/"
+
+import sys
+sys.path.insert(0, PASTASPYGE)
+
+from pastaspyge.git import post_receive
+
+post_receive(repo_dir=PAGE_REPO, document_root=DOCUMENT_ROOT)

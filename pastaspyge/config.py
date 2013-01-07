@@ -5,7 +5,8 @@ import os
 from pastaspyge.exceptions import InvalidConfig
 
 class Config(object):
-    def __init__(self, root=None):
+    def __init__(self, root=None, document_root=None):
+        self.document_root = document_root
         if root:
             self.root = os.path.abspath(root)
         else:

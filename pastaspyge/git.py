@@ -61,7 +61,7 @@ def changed_files(new=None, old=None):
         deleted.append(f.encode("iso-8859-1").decode("utf-8"))
     return (added, deleted)
 
-def post_receive(repo_dir, path_prefix=''):
+def post_receive(repo_dir, document_root, path_prefix=''):
     if 'GIT_DIR' not in os.environ:
         not_hook()
     git_dir = os.path.abspath(os.environ['GIT_DIR'])
@@ -108,4 +108,6 @@ def post_receive(repo_dir, path_prefix=''):
                 copy.append(os.path.join(path_prefix, 'output', t))
             break
     print("Copying files %s" % (copy,))
+    pasta.copy_files(copy)
     print("Deleting files %s" % (delete,))
+    pasta.delete_files(delete)

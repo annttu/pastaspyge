@@ -54,16 +54,18 @@ class Pasta(object):
         self._write_output(f, self.generate_dynamic(f), overwrite=overwrite)
 
     def generate_all(self):
+        retval = []
         for f in self.find_dynamic_files():
-            print("%s"% f)
+            retval.append(f)
             self.generate_file(f,overwrite=True)
+        return retval
 
     def _write_output(self, f, content, overwrite=True):
         fpath = os.path.join(self.config.output_path, f.lstrip('/'))
         if os.path.exists(fpath) and os.path.isfile(fpath) and not overwrite:
             self.log.error('File %s already exist' % fpath)
             AlreadyExists('File %s already exist' % fpath)
-        if os.path.exists(fpath) and not os.path.exists(fpath):
+        if os.path.exists(fpath) and not os.path.isfile(fpath):
             self.log.error('Path %s already exist and is not file!' % fpath)
             raise IsDir('Path %s already exist and is not file!' % fpath)
         try:
@@ -73,3 +75,45 @@ class Pasta(object):
         except IOError:
             self.log.error('Cannot write to file %s' % fpath)
             raise
+
+    def copy_files(self, files):
+        if not self.config.document_root:
+            raise InvalidConfig('To copy files, document_root must be set')
+        if not os.path.isdir(self.config.document_root):
+            raise InvalidConfig('To copy files, document_root must exist')
+        for f in files:
+            sourcepath = os.path.abspath(f)
+            if not os.path.isfile(sourcepath):
+                self.log.error('Path %s does not exist!' % sourcepath)
+                raise IsDir('Path %s does not exist!' % sourcepath)
+            source = codecs.open(sourcepath, 'w', 'utf-8')
+            if f.startswith('static/'):
+                f = f[:len('static')]
+            else:
+                f = f[:len('dynamic')]
+            destpath = os.path.join(self.config.document_root, f)
+            if os.path.exists(destpath) and not os.path.isfile(destpath):
+                self.log.error('Path %s already exist and is not file!' % destpath)
+                raise IsDir('Path %s already exist and is not file!' % destpath)
+            dest = codecs.open(destpath, 'w', 'utf-8')
+            try:
+                dest.write(source.read())
+                source.close()
+                dest.close()
+                self.log.info("Copied %s -> %s" % (sourcepath, destpath))
+            except IOError as e:
+                self.log.exception(e)
+
+    def delete_files(self, files):
+        if not self.config.document_root:
+            raise InvalidConfig('To copy files, document_root must be set')
+        if not os.path.isdir(self.config.document_root):
+            return
+        for f in files:
+            destpath = os.path.join(self.config.document_root, f)
+            try:
+                os.remove(destpath)
+                self.log.info("Removed file %s" % destpath)
+            except OSError:
+                os.rmdir(destpath)
+                self.log.info("Removed dir %s" % destpath)
