@@ -6,8 +6,11 @@ import os
 import sys
 import logging
 import codecs
+from datetime import datetime
+
 from pastaspyge.config import Config
 from pastaspyge.exceptions import NotFound, IsDir, InvalidConfig, AlreadyExists
+from pastaspyge.extensions import LastModifed
 
 class Pasta(object):
     def __init__(self, **kwargs):
@@ -24,7 +27,7 @@ class Pasta(object):
         path = [jinja2.loaders.FileSystemLoader(self.config.template_path),
                 jinja2.loaders.FileSystemLoader(self.config.dynamic_path)]
         loader = jinja2.loaders.ChoiceLoader(path)
-        extensions = []
+        extensions = [LastModifed]
         self.jinjaenv = jinja2.Environment(loader=loader,extensions=extensions)
 
 
@@ -39,7 +42,9 @@ class Pasta(object):
         elif os.path.isdir(fpath):
             raise IsDir('Path is dir: %s' % fpath)
         template = self.jinjaenv.get_template(template_file)
-        content = template.render(config=self.config, environ=self.jinjaenv)
+        modtime = datetime.fromtimestamp(os.path.getmtime(os.path.abspath(fpath)))
+        content = template.render(config=self.config, environ=self.jinjaenv,
+                                  last_modifed=modtime)
         return content
 
     def find_dynamic_files(self):

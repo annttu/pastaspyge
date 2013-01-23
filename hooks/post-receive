@@ -7,8 +7,8 @@ Before use, set PAGE_REPO and PASTASPYGE variables
 """
 
 # Local clone of this repository.
-PAGE_REPO = "/home/users/annttu/varjosivu/"
-DOCUMENT_ROOT = "/home/users/annttu/varjosivu_www/"
+PAGE_REPO = "/path/to/local/clone/of/site/repository"
+DOCUMENT_ROOT = "/document-root/for/site/"
 
 # Path to pastaspyge source
 PASTASPYGE= "/home/users/annttu/pastaspyge/"

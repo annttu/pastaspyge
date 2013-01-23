@@ -7,5 +7,8 @@
   {% block body %}
   	<p>Default content here</p>
   {% endblock %}
+  <div class="lastmodifed">
+	<span>{{ last_modifed.strftime('%d.%m.%Y %H:%M') }}</span>
+  </div>
  </body>
 </html>
