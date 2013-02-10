@@ -25,7 +25,6 @@ def not_hook():
 
 
 def run_git(args):
-    logging.debug("args: %s" % repr(args))
     a = Popen(args, stdout=PIPE, stderr=PIPE)
     if a.wait() != 0:
         logging.error("%s returncode nonzero" % args[0])
@@ -71,7 +70,6 @@ def post_receive(repo_dir, document_root, path_prefix=''):
         old_commit=a[0]
         new_commit=a[1]
         ref=a[2]
-        #print("old: %s, new: %s, ref: %s" % (old_commit, new_commit, ref))
     else:
         not_hook()
     if not os.path.isdir(repo_dir):

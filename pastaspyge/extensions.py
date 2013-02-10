@@ -3,8 +3,6 @@
 from jinja2 import nodes
 from jinja2.ext import Extension
 
-from pprint import pprint
-
 class LastModifed(Extension):
     """
     "lastmodifed" template tag, gets file last modifed date
@@ -12,12 +10,8 @@ class LastModifed(Extension):
     tags = set(['lastmodifed'])
     def __init__(self, environment):
         self.environment = environment
-        pprint(vars(environment))
 
     def parse(self, parser):
-        pprint(vars(parser))
-        pprint(vars(parser.environment))
-        pprint(vars(parser.environment.loader))
         token = parser.stream.next()
         return nodes.Output([self.call_method('_render')]).set_lineno(token.lineno)
 
