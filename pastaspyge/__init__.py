@@ -52,7 +52,7 @@ class Pasta(object):
         path = self.config.dynamic_path
         for p in os.walk(path):
             for f in p[2]:
-                paths.append(os.path.join(p[0], f)[len(path)-1:]) 
+                paths.append(os.path.join(p[0], f)[len(path):]) 
         return paths
 
     def generate_file(self, f, overwrite=True):

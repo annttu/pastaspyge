@@ -95,7 +95,7 @@ def post_receive(repo_dir, document_root, path_prefix=''):
     for f in changed:
         if f.startswith(os.path.join(path_prefix, 'dynamic/')):
             # dynamic change
-            f = f[len('dynamic/'):]
+            f = f[len(os.path.join(path_prefix, 'dynamic/')):]
             pasta.generate_file(f, overwrite=True)
             copy.append(os.path.join(path_prefix, 'output', f))
         elif f.startswith(os.path.join(path_prefix, 'static/')):
