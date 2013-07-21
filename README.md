@@ -15,10 +15,10 @@ Remote machine (www-server):
 
 Create mysite.git repository
 
-$ mkdir mysite.git
-$ cd mysite.git
-$ git init --bare
-$ cd ..
+    $ mkdir mysite.git
+    $ cd mysite.git
+    $ git init --bare
+    $ cd ..
 
 Then copy hooks/post-receive hook from pastaspyge to mysite.git/hooks
 directory and make it executable (chmod +x). Also remember to fix
@@ -26,22 +26,22 @@ DOCUMENT\_ROOT, PAGE\_REPO and PASTASPYGE variables to correct values.
 
 Then create copy of mysite.git
 
-$ git clone mysite.git .mysite
+    $ git clone mysite.git .mysite
 
 Local machine (workstation):
 
 Create site repository using git
 
-$ mkdir mypage
-$ cd mypage
-$ git init
+    $ mkdir mypage
+    $ cd mypage
+    $ git init
 
 Copy example directory content to new repository.
 
-$ git add .
-$ git commit -m "init"
-$ git remote add origin username@myhost:/path/to/mysite.git
-$ git push origin master
+    $ git add .
+    $ git commit -m "init"
+    $ git remote add origin username@myhost:/path/to/mysite.git
+    $ git push origin master
 
 Now you have very simple git based "cms"
 
