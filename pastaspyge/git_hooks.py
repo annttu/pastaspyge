@@ -3,7 +3,7 @@
 # Git hooks for pastaspyge
 
 from pastaspyge.git import git_pull, changed_files
-from pastaspyge import Pasta
+from pastaspyge.pasta import Pasta
 
 import os
 import sys
