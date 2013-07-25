@@ -16,7 +16,9 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 
-REPO_DIR=os.getcwd()
+REPO_DIR = os.getcwd()
+GIT_BINARY = 'git'
+
 
 def not_hook():
     print("This script should be run as post-receive hook")
@@ -25,6 +27,7 @@ def not_hook():
 
 
 def run_git(args):
+    args = [GIT_BINARY] + list(args)
     a = Popen(args, stdout=PIPE, stderr=PIPE)
     if a.wait() != 0:
         logging.error("%s returncode nonzero" % args[0])
@@ -32,14 +35,30 @@ def run_git(args):
         return (None, None)
     return a.communicate()
 
+
 def git_pull():
-    run_git(['git','checkout','master'])
-    run_git(['git','pull'])
+    run_git(['checkout', 'master'])
+    run_git(['pull'])
+
+
+def git_add(file_):
+    a, b = run_git(['add', str(file_)])
+    if a is None and b is None:
+        return False
+    return True
+
+
+def git_rm(file_):
+    a, b = run_git(['rm', str(file_)])
+    if a is None and b is None:
+        return False
+    return True
+
 
 def changed_files(new=None, old=None):
     """Get added and deleted files between new and old commits
     returns tuple (added, deleted)"""
-    args = ['git', 'diff','--name-only']
+    args = ['diff', '--name-only']
     if new and old:
         args.append("%s...%s" % (old, new))
     added = []
@@ -47,18 +66,19 @@ def changed_files(new=None, old=None):
     # get added files
     (stdout, stderr) = run_git(args + ['--diff-filter=A,M'])
     if stderr:
-        log.error("stderr")
+        logger.error("stderr")
     for f in stdout.splitlines():
         f = f.strip().strip(b'"').decode("unicode_escape")
         added.append(f.encode("iso-8859-1").decode("utf-8"))
     # get deleted files
     (stdout, stderr) = run_git(args + ['--diff-filter=D'])
     if stderr:
-        log.error("stderr")
+        logger.error("stderr")
     for f in stdout.splitlines():
         f = f.strip().strip(b'"').decode("unicode_escape")
         deleted.append(f.encode("iso-8859-1").decode("utf-8"))
     return (added, deleted)
+
 
 def post_receive(repo_dir, document_root, path_prefix=''):
     if 'GIT_DIR' not in os.environ:
@@ -67,9 +87,8 @@ def post_receive(repo_dir, document_root, path_prefix=''):
     a = sys.stdin.readlines()
     if len(a) == 1:
         a = a[0][:-1].split()
-        old_commit=a[0]
-        new_commit=a[1]
-        ref=a[2]
+        old_commit = a[0]
+        new_commit = a[1]
     else:
         not_hook()
     if not os.path.isdir(repo_dir):
