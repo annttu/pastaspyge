@@ -11,11 +11,11 @@ PAGE_REPO = "/path/to/local/clone/of/site/repository"
 DOCUMENT_ROOT = "/document-root/for/site/"
 
 # Path to pastaspyge source
-PASTASPYGE= "/home/users/annttu/pastaspyge/"
+PASTASPYGE = "/home/users/annttu/pastaspyge/"
 
 import sys
 sys.path.insert(0, PASTASPYGE)
 
-from pastaspyge.git import post_receive
+from pastaspyge.git_hooks import post_receive
 
 post_receive(repo_dir=PAGE_REPO, document_root=DOCUMENT_ROOT)
