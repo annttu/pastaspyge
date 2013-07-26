@@ -136,10 +136,9 @@ class Git(object):
         """
         (stdout, stderr) = self._run('push', remote, "%s:%s" % (local_branch,
                                                                 remote_branch))
-        if stderr is None:
-            logger.debug("git push output: %s" % stdout)
-            return True
-        raise GitError("Git push returned error: %s" % stderr)
+        logger.debug("git push output: %s" % stdout)
+        logger.debug("git push stderr: %s" % stderr)
+        return True
 
     def add(self, path):
         """
