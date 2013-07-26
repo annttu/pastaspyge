@@ -2,7 +2,7 @@
 
 # Git hooks for pastaspyge
 
-from pastaspyge.git import git_pull, changed_files
+from pastaspyge.git import Git
 from pastaspyge.pasta import Pasta
 
 import os
@@ -19,6 +19,7 @@ def not_hook():
 
 
 def post_receive(repo_dir, document_root, path_prefix=''):
+    git = Git(repository=repo_dir)
     if 'GIT_DIR' not in os.environ:
         not_hook()
     git_dir = os.path.abspath(os.environ['GIT_DIR'])
@@ -35,8 +36,12 @@ def post_receive(repo_dir, document_root, path_prefix=''):
     os.chdir(repo_dir)
     os.environ['GIT_DIR'] = os.path.join(repo_dir, '.git')
     os.environ['GIT_WORK_TREE'] = repo_dir
-    git_pull()
-    changed, delete = changed_files(new_commit, old_commit)
+    # Use fetch and reset --hard to force new changes, local working copy
+    # must not have any local modifications
+    git.fetch()
+    git.reset(hard=True)
+    git.pull()
+    changed, delete = git.changed_files(new_commit, old_commit)
     remove = []
     for d in delete:
         if d.startswith(os.path.join(path_prefix, 'dynamic/')):
