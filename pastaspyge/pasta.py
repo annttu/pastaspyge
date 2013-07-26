@@ -64,6 +64,23 @@ class Pasta(object):
             self.generate_file(f, overwrite=True)
         return retval
 
+    def create_directory(self, path):
+        path = os.path.dirname(os.path.abspath(path))
+        if not os.path.isdir(path):
+            prevpath = '/'.join(path.split("/")[:-1])
+            if self.create_directory(prevpath) is True:
+                try:
+                    os.mkdir(path)
+                    return True
+                except Exception as e:
+                    self.log.exception(e)
+                    self.log.error("Cannot create directory %s" % path)
+                    return False
+            else:
+                return False
+        else:
+            return True
+
     def _write_output(self, f, content, overwrite=True):
         fpath = os.path.join(self.config.output_path, f.lstrip('/'))
         if os.path.exists(fpath) and os.path.isfile(fpath) and not overwrite:
@@ -72,6 +89,7 @@ class Pasta(object):
         if os.path.exists(fpath) and not os.path.isfile(fpath):
             self.log.error('Path %s already exist and is not file!' % fpath)
             raise IsDir('Path %s already exist and is not file!' % fpath)
+        self.create_directory(fpath)
         try:
             f = codecs.open(fpath, 'w', 'utf-8')
             f.write(content)
@@ -96,12 +114,8 @@ class Pasta(object):
             else:
                 f = f[len('output/'):]
             destpath = os.path.join(self.config.document_root, f)
-            if not os.path.isdir(os.path.dirname(destpath)):
-                try:
-                    os.mkdir(os.path.dirname(destpath))
-                except IOError as e:
-                    self.log.exception(e)
-                    raise
+            if not self.create_directory(destpath):
+                continue
             if os.path.exists(destpath) and not os.path.isfile(destpath):
                 self.log.error('Path %s already exist and is not file!' % destpath)
                 raise IsDir('Path %s already exist and is not file!' % destpath)
@@ -114,16 +128,35 @@ class Pasta(object):
             except IOError as e:
                 self.log.exception(e)
 
+    def is_empty(self, path):
+        return os.listdir(path) == []
+
+    def delete_file(self, path):
+        if os.path.isdir(path):
+            try:
+                os.rmdir(path)
+                self.log.info("Removed dir %s" % path)
+            except OSError:
+                self.log.info("Failed to remove dir %s" % path)
+        elif os.path.exists(path):
+
+            try:
+                os.remove(path)
+                self.log.info("Removed file %s" % path)
+                parent_path = '/'.join(path.split('/')[:-1])
+                if self.is_empty(parent_path):
+                    self.delete_file(parent_path)
+                return True
+            except OSError:
+                self.log.info("Failed to remove file %s" % path)
+                return False
+
     def delete_files(self, files):
         if not self.config.document_root:
             raise InvalidConfig('To copy files, document_root must be set')
         if not os.path.isdir(self.config.document_root):
             return
         for f in files:
-            destpath = os.path.join(self.config.document_root, f)
-            try:
-                os.remove(destpath)
-                self.log.info("Removed file %s" % destpath)
-            except OSError:
-                os.rmdir(destpath)
-                self.log.info("Removed dir %s" % destpath)
+            f = f.lstrip('/')
+            self.delete_file(os.path.join(self.config.document_root, f))
+            self.delete_file(os.path.join('output', f))
