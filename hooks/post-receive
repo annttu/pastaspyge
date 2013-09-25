@@ -13,8 +13,15 @@ DOCUMENT_ROOT = "/document-root/for/site/"
 # Path to pastaspyge source
 PASTASPYGE = "/home/users/annttu/pastaspyge/"
 
+# Virtualenv to user
+VIRTUAL_ENV = ""
+
 import sys
 sys.path.insert(0, PASTASPYGE)
+
+if VIRTUAL_ENV:
+    from pastaspyge.utils import activate_env
+    activate_env(VIRTUAL_ENV)
 
 from pastaspyge.git_hooks import post_receive
 

@@ -27,6 +27,7 @@ SEDBASEDIR="`escape $BASEDIR`"
 SED_PREFIX="`escape "$ENV_PREFIX"`"
 cat $MYDIR/../hooks/post-receive |sed -e "s/\(PASTASPYGE =\).*/\1 \"${SEDBASEDIR}\"/" \
 -e "s/\(PAGE_REPO =\).*/\1 \"$SED_PREFIX\/pastatest-local\"/" \
+-e "s;\(VIRTUAL_ENV =\).*;\1 \"$VIRTUAL_ENV\";" \
 -e "s/\(DOCUMENT_ROOT =\).*/\1 \"$SED_PREFIX\/pastaroot\"/" > "$ENV_PREFIX/pastatest/hooks/post-receive"
 
 chmod a+x "$ENV_PREFIX/pastatest/hooks/post-receive"
