@@ -70,6 +70,13 @@ class Git(object):
                 os.environ[i] = env_save[i]
         return ret
 
+    def is_initial(self):
+        stdout, stderr = self._run('rev-parse', '--abbrev-ref', '--all')
+        if not stdout:
+            # Repository don't have any commits
+            return True
+        return False
+
     def current_branch(self):
         """
         Get active branch name
@@ -79,6 +86,8 @@ class Git(object):
 
         @raise GitError: Raised on git error
         """
+        if self.is_initial():
+            return "master"
         stdout, stderr = self._run('rev-parse', '--abbrev-ref', 'HEAD')
         if stdout is not None:
             return stdout.strip()
@@ -268,6 +277,8 @@ class Git(object):
         @type hard: boolean
         @return: True if successfully reseted
         """
+        if self.is_initial():
+            return True
         args = ['reset']
         if hard is True:
             args.append('--hard')
