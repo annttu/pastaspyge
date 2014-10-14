@@ -34,8 +34,9 @@ class Pasta(object):
         """
         Render dynamic page
         """
+        relative_path = template_file.lstrip('/')
         fpath = os.path.join(self.config.dynamic_path,
-                             template_file.lstrip('/'))
+                             relative_path)
         if not os.path.exists(fpath):
             raise NotFound('File not found: %s' % fpath)
         elif os.path.isdir(fpath):
@@ -43,7 +44,7 @@ class Pasta(object):
         template = self.jinjaenv.get_template(template_file)
         modtime = datetime.fromtimestamp(os.path.getmtime(os.path.abspath(fpath)))
         content = template.render(config=self.config, environ=self.jinjaenv,
-                                  last_modifed=modtime)
+                                  last_modifed=modtime, relative_path=relative_path)
         return content
 
     def find_dynamic_files(self):
