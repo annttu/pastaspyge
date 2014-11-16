@@ -10,6 +10,7 @@ from datetime import datetime
 from pastaspyge.config import Config
 from pastaspyge.exceptions import NotFound, IsDir, InvalidConfig, AlreadyExists
 from pastaspyge.extensions import LastModifed
+from pastaspyge import utils
 
 
 class Pasta(object):
@@ -109,7 +110,7 @@ class Pasta(object):
             if not os.path.isfile(sourcepath):
                 self.log.error('Path %s does not exist!' % sourcepath)
                 raise IsDir('Path %s does not exist!' % sourcepath)
-            source = codecs.open(sourcepath, 'r', 'utf-8')
+            source = open(sourcepath, 'rb')
             if f.startswith('static/'):
                 f = f[len('static/'):]
             else:
@@ -120,7 +121,7 @@ class Pasta(object):
             if os.path.exists(destpath) and not os.path.isfile(destpath):
                 self.log.error('Path %s already exist and is not file!' % destpath)
                 raise IsDir('Path %s already exist and is not file!' % destpath)
-            dest = codecs.open(destpath, 'w', 'utf-8')
+            dest = open(destpath, 'wb')
             try:
                 dest.write(source.read())
                 source.close()

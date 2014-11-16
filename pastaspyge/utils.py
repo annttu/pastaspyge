@@ -11,3 +11,7 @@ def activate_env(path):
         local_vars['__file__'] = path
         code = compile(f.read(), path, 'exec')
         exec(code, global_vars, local_vars)
+
+python3 = False
+if sys.version_info>=(3,0,0):
+    python3 = True
