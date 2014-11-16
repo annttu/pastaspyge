@@ -1,12 +1,13 @@
 PaStaSPyGe
 ==========
 
-Paras Staattisien sivujen Pythonistinen generaattori.
-Remake of (RaStaSPyGe)
+Static python page generator. Can be used as git hook to template and publish static pages.
 
-Copyright 2013 Kapsi Internet-käyttäjät ry
 
-Tekijä: Antti Jaakkola
+Author
+======
+* Antti Jaakkola
+
 
 Installation
 ============
@@ -44,6 +45,7 @@ Copy example directory content to new repository.
     $ git push origin master
 
 Now you have very simple git based "cms"
+
 
 Directories
 ===========
