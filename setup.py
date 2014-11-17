@@ -1,10 +1,14 @@
 from codecs import open
+import pypandoc
 from setuptools import setup, find_packages
 
+description = "Thin wrapper for pandoc."
+try:
+    long_description = pypandoc.convert('README.md', 'rst')
+except (IOError, OSError):
+    print('check that you have installed pandoc properly and that README.md exists!')
+    long_description = "Static web page generator."
 
-# Get the long description from the relevant file
-with open('README', encoding='utf-8') as f:
-    long_description = f.read()
 
 
 setup(name='pastaspyge',
